@@ -24,7 +24,7 @@ schema = StructType([
 # 3. Đọc từ Kafka (Dùng DNS nội bộ của Docker)
 raw_df = spark.readStream \
     .format("kafka") \
-    .option("kafka.bootstrap.servers", "kafka-1:29092,kafka-2:29094") \
+    .option("kafka.bootstrap.servers", "kafka-1:9092,kafka-2:9092") \
     .option("subscribe", "weather_topic") \
     .option("startingOffsets", "earliest") \
     .load()

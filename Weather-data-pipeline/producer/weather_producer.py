@@ -14,12 +14,14 @@ CITY = os.getenv("CITY_NAME")
 KAFKA_SERVER = os.getenv("KAFKA_BOOTSTRAP_SERVERS")
 TOPIC = os.getenv("KAFKA_TOPIC")
 
+
 # 2. Khởi tạo Kafka Producer
 # Thay vì truyền trực tiếp biến string KAFKA_SERVER
 # Hãy biến nó thành một danh sách (list) bằng cách dùng .split(',')
 try:
     producer = KafkaProducer(
-        bootstrap_servers=KAFKA_SERVER.split(','), # Thêm .split(',') ở đây
+        bootstrap_servers=['kafka-1:9092', 'kafka-2:9092'],
+        #bootstrap_servers=['kafka-1:9092', 'kafka-2:9092'],
         #bootstrap_servers=[KAFKA_SERVER],
         value_serializer=lambda v: json.dumps(v).encode('utf-8'),
         acks='all',

@@ -1,4 +1,18 @@
+# Environments
 .env
+
+# Python
 __pycache__/
+*.py[cod]
+*$py.class
 venv/
-checkpoint/
+.venv/
+
+# Spark/Kafka
+checkpoints/
+logs/
+.spark_staging/
+
+# IDEs
+.vscode/
+.idea/

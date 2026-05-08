@@ -25,10 +25,10 @@ docker-compose up -d
 
 3. Chạy các thành phần của Pipeline
 
-**Bước A: Chạy Weather Producer
+**Bước A: Chạy Weather Producer**
 
 ```
-python producer/weather_producer.py**
+python producer/weather_producer.py
 ```
 
 **Bước B: Chạy Spark Structured Streaming**
@@ -57,10 +57,10 @@ Kết nối Database trong pgAdmin/DBeaver:
 - User: user | Password: 123456
 
 # 🛠 Cấu trúc thư mụcPlaintext.
-├── docker-compose.yml        # Định nghĩa các dịch vụ Docker
-├── producer/
-│   └── weather_producer.py   # Script lấy dữ liệu từ API gửi vào Kafka
-├── spark/
-│   └── process_weather.py    # Script Spark Streaming xử lý dữ liệu
-└── README.md                 # Tài liệu hướng dẫn
+├── docker-compose.yml        # Định nghĩa các dịch vụ Docker<br>
+├── producer/<br>
+$\hspace{0.3cm}$   └── weather_producer.py   # Script lấy dữ liệu từ API gửi vào Kafka<br>
+├── spark/<br>
+$\hspace{0.3cm}$  └── process_weather.py    # Script Spark Streaming xử lý dữ liệu<br>
+└── README.md                 # Tài liệu hướng dẫn<br>
 

@@ -2,7 +2,7 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import from_json, col, to_timestamp
 from pyspark.sql.types import StructType, StructField, StringType, FloatType
 
-# 1. Khởi tạo Spark Session với driver JDBC 0.6.0 (ổn định hơn)
+# 1. Khởi tạo Spark Session 
 spark = SparkSession.builder \
     .appName("Weather-Data-Pipeline") \
     .config("spark.jars.packages", "org.apache.spark:spark-sql-kafka-0-10_2.12:3.4.0,com.clickhouse:clickhouse-jdbc:0.6.0") \
@@ -35,13 +35,12 @@ parsed_df = raw_df.selectExpr("CAST(value AS STRING)") \
     .select("data.*") \
     .withColumn("timestamp", to_timestamp(col("timestamp"), "yyyy-MM-dd HH:mm:ss"))
 
-# 5. Hàm ghi vào ClickHouse
+# 5. Hàm ghi vào Postgres
 def write_to_postgres(df, epoch_id):
     if df.count() > 0:
         try:
             print(f"📦 Batch {epoch_id}: Đang ghi dữ liệu vào PostgreSQL...")
             
-            # Khai báo URL và thông tin kết nối
             jdbc_url = "jdbc:postgresql://postgres:5432/weather_db"
             properties = {
                 "user": "user",
@@ -49,19 +48,16 @@ def write_to_postgres(df, epoch_id):
                 "driver": "org.postgresql.Driver"
             }
 
-            # Ghi trực tiếp - PostgreSQL sẽ tự tạo bảng ở lần đầu tiên nếu bạn dùng mode append
             df.write.jdbc(url=jdbc_url, table="weather_data", mode="append", properties=properties)
             
             print(f"✅ Batch {epoch_id}: Ghi thành công!")
         except Exception as e:
             print(f"❌ Lỗi ghi PostgreSQL: {e}")
 
-# Trong phần cuối của script, hãy sửa dòng này:
-# query = processed_df.writeStream.foreachBatch(write_to_postgres).start()
 # 6. Chạy Stream
 query = parsed_df.writeStream \
     .foreachBatch(write_to_postgres) \
     .start()
 
-print("🚀 Spark đang lắng nghe dữ liệu...")
+print("🚀 Spark đang chờ dữ liệu...")
 query.awaitTermination()

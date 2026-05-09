@@ -21,7 +21,7 @@ source venv/bin/activate
 
 ### **Bước 2**: Thiết lập Docker Compose & .env
 
-1. Tạo file `docker-compose.yml`: Định nghĩa các dịch vụ Kraft, Kafka-ui, Spark, Postgres và pgAdmin.
+1. Tạo file `docker-compose.yml`: Định nghĩa các dịch vụ Kraft, Kafka-ui, Spark, Postgres, grafana và pgAdmin.
 
 2. Tạo file `.env`: Lưu trữ các thông tin nhạy cảm.
 
@@ -72,7 +72,7 @@ docker-compose up -d --build
 
 - **Cách kiểm tra**: Vào mục **Topics** -> Chọn **weather_topic** -> Chọn tab **Messages**. Nếu thấy dữ liệu JSON đổ về liên tục, nghĩa là Producer đã thành công.
 
-<img width="1769" height="959" alt="kafka" src="https://github.com/user-attachments/assets/3246e5b6-2021-4161-94ef-5c63bb49b57a" />
+
 
 ### **Bước 2**: Giám sát xử lý dữ liệu (Spark UI)
 
@@ -80,20 +80,38 @@ docker-compose up -d --build
 
 - **Cách kiểm tra**: Xem mục **Running Applications**. Nếu thấy `job WeatherStream` đang chạy và không có lỗi (Failed), nghĩa là Spark đang xử lý các Batch.
 
+<img width="1769" height="959" alt="kafka" src="https://github.com/user-attachments/assets/3246e5b6-2021-4161-94ef-5c63bb49b57a" />
+
 ### **Bước 3**: Kiểm tra kho lưu trữ (pgAdmin)
 - **Địa chỉ**: http://localhost:5050
 
 - Cách thiết lập lần đầu:
 
-  1. Đăng nhập bằng email/pass trong docker-compose (mặc định: `admin@admin.com `/ `admin`).
+  1.Đăng nhập bằng email/pass trong docker-compose (mặc định: `admin@admin.com `/ `admin`).
 
-  2. **Add New Sever** -> 
+  2.**Add New Sever** -> 
     - Tab **General**: Name là `Weather_DB`
     - Tab **Connection**: Host là `postgres`, Port `5432`, Maintenance database là `weather_db`,Username/Pass là thông tin trong `.env`.
 
 - Xem dữ liệu: Vào đúng **Database** -> **Schemas** -> **public** -> **Tables** -> Chuột phải bảng **weather_data** -> **View Data** -> **All Rows**.
 
 <img width="1792" height="961" alt="pd" src="https://github.com/user-attachments/assets/cf458d32-21ad-4ed3-8e12-65dab780bfbc" />
+
+### **Bước 4** Dashboard trực quan hóa dữ liệu (grafana) 
+
+- **Địa chỉ**: http://localhost:3000
+
+- Cách thiết lập lần đầu:
+
+  1.Đăng nhập bằng email/pass trong docker-compose (mặc định: `admin`/ `admin`). Update your password : skip 
+
+  2.**Connections** -> **Data sources** -> **search**: postgres -> **grafana-postgresql-datasource**\
+    - **Connection**:  Host URL là `postgres:5432`, Database name là `weather_db`
+    - **Authentication**:  Username/Pass là thông tin trong `.env`, TLS/SSL Mode là `disable`
+  3.**Savs & test**
+  . **Dashboards** -> **Create dashboard** -> **Add visualization** -> **Select**: grafana-postgresql-datasource
+
+<img width="1784" height="953" alt="image" src="https://github.com/user-attachments/assets/90bac50f-9659-49f7-b7b6-ce2e8a2c5b5f" />
 
 ## **🏗 4. Cấu trúc thư mục dự án (Project Structure)**
 Dựa trên cấu trúc đang có:

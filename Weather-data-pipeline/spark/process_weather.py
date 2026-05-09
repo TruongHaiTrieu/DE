@@ -54,9 +54,15 @@ def write_to_postgres(df, epoch_id):
         except Exception as e:
             print(f"❌ Lỗi ghi PostgreSQL: {e}")
 
+
+
 # 6. Chạy Stream
+checkpoint_path = "/opt/spark/work-dir/checkpoints/weather_stream"
+
 query = parsed_df.writeStream \
     .foreachBatch(write_to_postgres) \
+    .option("checkpointLocation", checkpoint_path) \
+    .outputMode("append") \
     .start()
 
 print("🚀 Spark đang chờ dữ liệu...")

@@ -7,7 +7,7 @@ from kafka import KafkaProducer
 from dotenv import load_dotenv
 
 # 1. Load cấu hình từ file .env
-load_dotenv()
+load_dotenv(override=True)
 
 API_KEY = os.getenv("OPENWEATHER_API_KEY")
 CITY = os.getenv("CITY_NAME")
@@ -18,7 +18,7 @@ TOPIC = os.getenv("KAFKA_TOPIC")
 # 2. Khởi tạo Kafka Producer
 try:
     producer = KafkaProducer(
-        bootstrap_servers=['kafka-1:9092', 'kafka-2:9092'],
+        bootstrap_servers=KAFKA_SERVER.split(','),
         value_serializer=lambda v: json.dumps(v).encode('utf-8'),
         acks='all',
         retries=5

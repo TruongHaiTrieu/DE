@@ -20,27 +20,6 @@ Mở terminal tại thư mục gốc của dự án và chạy lệnh:
 ```
 docker-compose up -d
 ```
-
-*Lệnh này sẽ khởi chạy Kafka cluster, Spark Master/Worker, PostgreSQL và các công cụ giám sát.3. Cài đặt thư viện Python cho ProducerBashpip install kafka-python requests*
-
-3. Chạy các thành phần của Pipeline
-
-**Bước A: Chạy Weather Producer**
-
-```
-python producer/weather_producer.py
-```
-
-**Bước B: Chạy Spark Structured Streaming**
-Gửi job vào Spark cluster để bắt đầu xử lý:
-
-```
-docker exec -it spark-master /opt/spark/bin/spark-submit \
-  --master spark://spark-master:7077 \
-  --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.4.0,org.postgresql:postgresql:42.6.0 \
-  /opt/spark/work-dir/process_weather.py
-```
-
 # 📊 Giám sát và Kiểm tra dữ liệu
 
 
@@ -55,12 +34,4 @@ Kết nối Database trong pgAdmin/DBeaver:
 - Port: 5432
 - Database: weather_db
 - User: user | Password: 123456
-
-# 🛠 Cấu trúc thư mụcPlaintext.
-├── docker-compose.yml        # Định nghĩa các dịch vụ Docker<br>
-├── producer/<br>
-$\hspace{0.3cm}$   └── weather_producer.py   # Script lấy dữ liệu từ API gửi vào Kafka<br>
-├── spark/<br>
-$\hspace{0.3cm}$  └── process_weather.py    # Script Spark Streaming xử lý dữ liệu<br>
-└── README.md                 # Tài liệu hướng dẫn<br>
 

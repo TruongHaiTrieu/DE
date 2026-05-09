@@ -1,37 +1,116 @@
-# 📄 Weather Data Streaming Pipeline
-Hệ thống xử lý dữ liệu thời tiết thời gian thực (Real-time) sử dụng mô hình kiến trúc Modern Data Stack. Dữ liệu được thu thập từ OpenWeatherMap API, truyền tải qua Kafka, xử lý bằng Spark Streaming và lưu trữ vào PostgreSQL để phân tích.
+#**🌦️ End-to-End Weather Data Pipeline (Real-time ETL)**
 
-# 🏗 Kiến trúc hệ thống
-Hệ thống bao gồm các thành phần chính:
-- Producer (Python): Thu thập dữ liệu từ API và gửi vào Kafka Topic.Apache Kafka (KRaft mode): Hệ thống hàng đợi tin nhắn chịu lỗi cao.Apache Spark 
-- (Structured Streaming): Xử lý, làm sạch và ép kiểu dữ liệu theo thời gian thực.
-- PostgreSQL: Cơ sở dữ liệu quan hệ dùng để lưu trữ dữ liệu đã qua xử lý.
-- pgAdmin & Kafka-UI: Giao diện trực quan để giám sát dữ liệu và hệ thống.
+Hệ thống thu thập dữ liệu thời tiết thời gian thực từ OpenWeather API, xử lý qua Kafka & Spark Streaming và lưu trữ vào PostgreSQL.
 
-# 🚀 Hướng dẫn triển khai
-1. Yêu cầu hệ thống 
-- Đã cài đặt Docker và Docker Compose.
-- Python 3.x (để chạy Producer).
+<img width="1250" height="307" alt="{56576078-BD44-43CC-B043-87362701E817}" src="https://github.com/user-attachments/assets/4f1cafb7-22dc-4a18-aa79-48abfca6de2e" />
 
-2. Khởi động môi trường Docker
+## **🛠 1. Quy trình xây dựng (Step-by-Step)**
 
-Mở terminal tại thư mục gốc của dự án và chạy lệnh:
+### **Bước 1**: Khởi tạo dự án và Môi trường ảo (venv)
 
+Mở terminal tại thư mục gốc của dự án:
+
+```powershell 
+python -m venv venv
+# Kích hoạt venv
+# Windows:
+.\venv\Scripts\activate
+# Linux/Mac:
+source venv/bin/activate
 ```
-docker-compose up -d
+
+### **Bước 2**: Thiết lập Docker Compose & .env
+
+1. Tạo file `docker-compose.yml`: Định nghĩa các dịch vụ Kraft, Kafka-ui, Spark, Postgres và pgAdmin.
+
+2. Tạo file `.env`: Lưu trữ các thông tin nhạy cảm.
+
+3. Tạo `.env.example`: Copy từ .env nhưng để trống giá trị để push lên Git.
+
+### **Bước 3**: Phát triển thư mục Producer
+
+1. Tạo thư mục: `mkdir producer -> cd producer.`
+
+2. Viết Script: Tạo file `weather_producer.py` để lấy dữ liệu từ API và gửi vào Kafka.
+
+3. Cài đặt thư viện:
+
+```Bash
+pip install kafka-python requests python-dotenv
 ```
-# 📊 Giám sát và Kiểm tra dữ liệu
+4. Tạo Requirements:
 
+```Bash
+pip freeze > requirements.txt
+```
 
-|Công cụ|Địa chỉ (URL)|Chức năng|
-|---|---|---|
-|Kafka-UIUI|http://localhost:8080UI|Xem các tin nhắn đang chảy trong Kafka Topic|
-|Spark MasterUI|http://localhost:8081UI|Theo dõi trạng thái các Jobs và Workers|
-|pgAdminUI|http://localhost:5050UI|Giao diện quản lý Database (User: admin@admin.com)|
+5. Viết Dockerfile: Tạo file `Dockerfile` trong thư mục `producer` để container hóa script này.
 
-Kết nối Database trong pgAdmin/DBeaver:
-- Host: localhost (nếu dùng DBeaver) hoặc postgres (nếu dùng pgAdmin trong Docker)
-- Port: 5432
-- Database: weather_db
-- User: user | Password: 123456
+### **Bước 4**: Phát triển thư mục Spark Processor
+1. Tạo thư mục: `mkdir spark -> cd spark`.
 
+2. Viết Script ETL: Tạo file `process_weather.py` sử dụng `foreachBatch` và `checkpointLocation`.
+
+3. Viết Dockerfile: Sử dụng image  `apache/spark-py:latest` làm base.
+
+4. Tạo Checkpoint: Tạo thư mục con `checkpoints/weather_stream` để lưu trạng thái xử lý.
+
+## **🚀 2. Cách triển khai hệ thống**
+Tại thư mục gốc, chạy lệnh duy nhất:
+
+```Bash
+docker-compose up -d --build
+```
+
+## **📊 3. Hướng dẫn giám sát (Monitoring) Step-by-Step**
+
+Để kiểm tra xem hệ thống có chạy đúng không, hãy truy cập theo thứ tự sau:
+
+### **Bước 1**: Giám sát luồng tin nhắn (Kafka UI)
+
+- **Địa chỉ**: http://localhost:8080
+
+- **Cách kiểm tra**: Vào mục **Topics** -> Chọn **weather_topic** -> Chọn tab **Messages**. Nếu thấy dữ liệu JSON đổ về liên tục, nghĩa là Producer đã thành công.
+
+<img width="1769" height="959" alt="kafka" src="https://github.com/user-attachments/assets/3246e5b6-2021-4161-94ef-5c63bb49b57a" />
+
+### **Bước 2**: Giám sát xử lý dữ liệu (Spark UI)
+
+- **Địa chỉ**: http://localhost:8081 (Master UI) hoặc cổng `4040` khi job đang chạy.
+
+- **Cách kiểm tra**: Xem mục **Running Applications**. Nếu thấy `job WeatherStream` đang chạy và không có lỗi (Failed), nghĩa là Spark đang xử lý các Batch.
+
+### **Bước 3**: Kiểm tra kho lưu trữ (pgAdmin)
+- **Địa chỉ**: http://localhost:5050
+
+- Cách thiết lập lần đầu:
+
+  1. Đăng nhập bằng email/pass trong docker-compose (mặc định: `admin@admin.com `/ `admin`).
+
+  2. **Add New Sever** -> 
+    - Tab **General**: Name là `Weather_DB`
+    - Tab **Connection**: Host là `postgres`, Port `5432`, Maintenance database là `weather_db`,Username/Pass là thông tin trong `.env`.
+
+- Xem dữ liệu: Vào đúng **Database** -> **Schemas** -> **public** -> **Tables** -> Chuột phải bảng **weather_data** -> **View Data** -> **All Rows**.
+
+<img width="1792" height="961" alt="pd" src="https://github.com/user-attachments/assets/cf458d32-21ad-4ed3-8e12-65dab780bfbc" />
+
+## **🏗 4. Cấu trúc thư mục dự án (Project Structure)**
+Dựa trên cấu trúc đang có:
+
+<img width="386" height="505" alt="st" src="https://github.com/user-attachments/assets/6ebbdc9a-bbec-4ace-8e9f-6a9467fc72a7" />
+
+- `producer/`: Chứa mã nguồn thu thập dữ liệu.
+
+- `spark/`: Chứa mã nguồn xử lý luồng (Stream Processing) và checkpoints.
+
+- `docker-compose.yml`: "Nhạc trưởng" kết nối tất cả các thành phần.
+
+- `.env`: Quản lý bí mật (Secrets).
+
+- `.gitignore`: Loại bỏ venv và .env khỏi Git.
+
+## **💡 Lưu ý quan trọng**
+**Checkpoint**: Nếu bạn sửa Schema của dữ liệu, hãy xóa thư mục `spark/checkpoints` trước khi khởi động lại để tránh lỗi xung đột metadata.
+
+**Volume**: Thư mục `spark` được mount vào container để đảm bảo code và checkpoint không bị mất khi container bị tắt.

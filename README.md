@@ -2,7 +2,8 @@
 
 Hệ thống thu thập dữ liệu thời tiết thời gian thực từ OpenWeather API, xử lý qua Kafka & Spark Streaming và lưu trữ vào PostgreSQL.
 
-<img width="1250" height="307" alt="{56576078-BD44-43CC-B043-87362701E817}" src="https://github.com/user-attachments/assets/4f1cafb7-22dc-4a18-aa79-48abfca6de2e" />
+<img width="1080" height="341" alt="{9C6C25FD-4630-4B9E-A95F-F613E7322833}" src="https://github.com/user-attachments/assets/d0823b18-76a0-48fa-ae9f-ef422965dcbf" />
+
 
 ## **🛠 1. Quy trình xây dựng (Step-by-Step)**
 

@@ -73,7 +73,7 @@ docker-compose up -d --build
 
 - **Cách kiểm tra**: Vào mục **Topics** -> Chọn **weather_topic** -> Chọn tab **Messages**. Nếu thấy dữ liệu JSON đổ về liên tục, nghĩa là Producer đã thành công.
 
-
+<img width="1769" height="959" alt="kafka" src="https://github.com/user-attachments/assets/3246e5b6-2021-4161-94ef-5c63bb49b57a" />
 
 ### **Bước 2**: Giám sát xử lý dữ liệu (Spark UI)
 
@@ -81,7 +81,8 @@ docker-compose up -d --build
 
 - **Cách kiểm tra**: Xem mục **Running Applications**. Nếu thấy `job WeatherStream` đang chạy và không có lỗi (Failed), nghĩa là Spark đang xử lý các Batch.
 
-<img width="1769" height="959" alt="kafka" src="https://github.com/user-attachments/assets/3246e5b6-2021-4161-94ef-5c63bb49b57a" />
+<img width="1785" height="957" alt="spark" src="https://github.com/user-attachments/assets/afc2091e-2546-484b-9d26-5e2506734138" />
+
 
 ### **Bước 3**: Kiểm tra kho lưu trữ (pgAdmin)
 - **Địa chỉ**: http://localhost:5050

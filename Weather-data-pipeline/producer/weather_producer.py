@@ -49,7 +49,7 @@ def transform_weather_data(raw):
 def fetch_and_send():
     url = f"http://api.openweathermap.org/data/2.5/weather?q={CITY}&appid={API_KEY}&units=metric"
     
-    print(f"🚀 Bắt đầu lấy dữ liệu cho {CITY}...")
+    print(f"Bắt đầu lấy dữ liệu cho {CITY}...")
     
     while True:
         try:
@@ -64,12 +64,12 @@ def fetch_and_send():
                     producer.send(TOPIC, value=clean_data)
                     producer.flush() 
 
-                    print(f"📤 Sent: {clean_data['timestamp']} | {clean_data['temp']}°C | {clean_data['weather_desc']}")
+                    print(f"Sent: {clean_data['timestamp']} | {clean_data['temp']}°C | {clean_data['weather_desc']}")
             else:
-                print(f"❌ Lỗi API: {response.status_code} - {response.text}")
+                print(f"Lỗi API: {response.status_code} - {response.text}")
                 
         except Exception as e:
-            print(f"❌ Lỗi hệ thống: {e}")
+            print(f"Lỗi hệ thống: {e}")
         
         time.sleep(30)
 
@@ -77,6 +77,6 @@ if __name__ == "__main__":
     try:
         fetch_and_send()
     except KeyboardInterrupt:
-        print("\n🛑 Đã dừng Producer.")
+        print("\nĐã dừng Producer.")
     finally:
         producer.close()

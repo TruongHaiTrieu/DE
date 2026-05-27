@@ -9,6 +9,6 @@ WORKDIR /opt/spark/work-dir
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY process_weather.py .
+COPY weather_consumer.py .
 
 USER spark

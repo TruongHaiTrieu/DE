@@ -15,7 +15,7 @@ DB = os.getenv("POSTGRES_DB")
 
 if not KAFKA_SERVER or not TOPIC:
     print(KAFKA_SERVER , TOPIC)
-    raise ValueError("❌ Thiếu cấu hình KAFKA_BOOTSTRAP_SERVERS hoặc KAFKA_TOPIC trong .env")
+    raise ValueError("Thiếu cấu hình KAFKA_BOOTSTRAP_SERVERS hoặc KAFKA_TOPIC trong .env")
 
 # 1. Khởi tạo Spark Session 
 spark = SparkSession.builder \
@@ -55,7 +55,7 @@ parsed_df = raw_df.selectExpr("CAST(value AS STRING)") \
 def write_to_postgres(df, epoch_id):
     if df.count() > 0:
         try:
-            print(f"📦 Batch {epoch_id}: Đang ghi dữ liệu vào PostgreSQL...")
+            print(f"Batch {epoch_id}: Đang ghi dữ liệu vào PostgreSQL...")
             
             jdbc_url = "jdbc:postgresql://postgres:5432/weather_db"
             properties = {
@@ -66,9 +66,9 @@ def write_to_postgres(df, epoch_id):
 
             df.write.jdbc(url=jdbc_url, table=DB, mode="append", properties=properties)
             
-            print(f"✅ Batch {epoch_id}: Ghi thành công!")
+            print(f"Batch {epoch_id}: Ghi thành công!")
         except Exception as e:
-            print(f"❌ Lỗi ghi PostgreSQL: {e}")
+            print(f"Lỗi ghi PostgreSQL: {e}")
 
 
 
@@ -81,5 +81,5 @@ query = parsed_df.writeStream \
     .outputMode("append") \
     .start()
 
-print("🚀 Spark đang chờ dữ liệu...")
+print("Spark đang chờ dữ liệu...")
 query.awaitTermination()
